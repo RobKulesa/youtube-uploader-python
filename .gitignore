@@ -1,0 +1,5 @@
+__pycache__
+client_secrets.json
+.vscode
+.DS_Store
+*.py-oauth2.json
