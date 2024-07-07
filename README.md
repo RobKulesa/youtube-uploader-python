@@ -17,6 +17,6 @@ docker build --target runtime --tag robjkulesa/volleyball-uploader .
 ```
 
 ```sh
-docker run -it --rm -v /Users/rkulesa/Documents:/mnt/user/media/volleyball robjkulesa/volleyball-uploader bash
+docker run -it --rm -v <path to videos>:/mnt/user/media/volleyball robjkulesa/volleyball-uploader bash
 python3 /usr/local/bin/volleyball-uploader --help
 ```
