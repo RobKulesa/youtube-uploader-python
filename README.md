@@ -13,10 +13,10 @@ docker run -t --rm volleyball-flyway
 ## Build and run main container:
 
 ```sh
-docker build --platform linux/amd64 --target runtime --tag robjkulesa/volleyball-uploader .
+docker build --platform linux/amd64 --target runtime --tag <dockerhub username>/volleyball-uploader .
 ```
 
 ```sh
-docker run -it --rm -v /Users/rkulesa/Documents:/mnt/user/media/volleyball robjkulesa/volleyball-uploader bash
+docker run -it --rm -v <path to videos>:/mnt/user/media/volleyball <dockerhub username>/volleyball-uploader bash
 python3 /usr/local/bin/volleyball-uploader --help
 ```
