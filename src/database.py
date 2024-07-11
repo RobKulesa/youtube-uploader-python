@@ -28,7 +28,7 @@ def insert_upload(file: str, privacy: Privacy) -> None:
     return
 
 def update_upload_status(filename: str, status: UploadStatus) -> None:
-    stmt = f"UPDATE volleyball_uploader.uploads SET status = '{status}' WHERE filename = '{filename}'"
+    stmt = f"UPDATE volleyball_uploader.uploads SET status = '{status}' WHERE filename = '{filename}' AND status = '{UploadStatus.PENDING}'"
     connect_and_execute(DATABASE_CONFIG, stmt)
     return
 

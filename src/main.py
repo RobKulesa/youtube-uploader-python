@@ -22,7 +22,7 @@ def scan_dir(directory: str, recursive: bool) -> List[str]:
 
 def main():
     parser = argparse.ArgumentParser(description="Scan directory for new volleyball videos to upload to YouTube")
-    parser.add_argument("--directory", type=str, required=False, help="The directory to scan for new volleyball videos", default="/mnt/user/media/volleyball")
+    parser.add_argument("--directory", type=str, required=False, help="The directory to scan for new volleyball videos", default="/videos")
     parser.add_argument("--recursive", required=False, action="store_true", help="Scan the directory recursively", default=False)
     parser.add_argument("--force", required=False, action="store_true", help="Force the upload of all videos", default=False)
     parser.add_argument("--privacy", type=Privacy, choices=list(Privacy), required=False, help="The privacy setting for the video", default=Privacy.PRIVATE)
@@ -31,20 +31,29 @@ def main():
     uploads = db.get_uploads()
 
     files = scan_dir(args.directory, args.recursive)
+    if len(files) == 0:
+        logger.info(f"No videos found in {args.directory}")
+        return
+    
     for file in files:
         filename = os.path.basename(file)
-        if filename in uploads[uploads["status"].isin([UploadStatus.UPLOADED, UploadStatus.PENDING])].filename.values:
+        if not args.force and filename in uploads[uploads["status"].isin([UploadStatus.UPLOADED, UploadStatus.PENDING])].filename.values:
             logger.info(f"Skipping {file} as it has already been uploaded")
             continue
 
-        db.insert_upload(file, args.privacy)
-        logger.debug(f"Inserted {file} into the database")
+        try:
+            db.insert_upload(file, args.privacy)
+            logger.debug(f"Inserted {file} into the database")
 
-        status = upload_video(file, filename, args.privacy)
-        logger.info(f"Upload status for {file}: {status}")
-
-        db.update_upload_status(filename, status)
-        logger.debug(f"Updated status for {file} to {status}")
+            status = upload_video(file, filename, args.privacy)
+            logger.info(f"Upload status for {file}: {status}")
+        except:
+            logger.exception(f"Failed to upload {file}")
+            db.update_upload_status(filename, UploadStatus.FAILED)
+            continue
+        else:
+            db.update_upload_status(filename, status)
+            logger.debug(f"Updated status for {file} to {status}")
 
 if __name__ == "__main__":
     main()
