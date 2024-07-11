@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from argparse import Namespace
-from collections import namedtuple
 import httplib2
 import os
 import random
@@ -16,8 +15,14 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
-from oauth2client.tools import argparser, run_flow
+from oauth2client.tools import run_flow
 
+class SafeNamespace(Namespace):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+    def __getattr__(self, _):
+        return None
 
 class UploadStatus(Enum):
     PENDING = "PENDING"
@@ -183,18 +188,14 @@ def main(
         title: str,
         privacy_status: Optional[Privacy] = Privacy.PRIVATE
     ) -> UploadStatus:
-    argparser.add_argument("--file", required=True, help="Video file to upload")
-    argparser.add_argument("--title", required=True, help="Video title")
-    argparser.add_argument("--privacyStatus", type=str , default=Privacy.PRIVATE.value, help="Video privacy status.")
-    argparser.add_argument("--description", help="Video description", default="")
-    argparser.add_argument("--category", default="22", help="Numeric video category. " + "See https://developers.google.com/youtube/v3/docs/videoCategories/list")
-    argparser.add_argument("--keywords", help="Video keywords, comma separated", default="")
-    args = argparser.parse_args([
-        "--file", file,
-        "--title", title,
-        "--privacyStatus", privacy_status.value,
-        "--noauth_local_webserver"
-    ])
+
+    args = SafeNamespace(
+        file=file,
+        title=title,
+        privacyStatus=privacy_status.value,
+        logging_level='ERROR',
+        noauth_local_webserver=True
+    )
 
     if not os.path.exists(args.file):
         logger.exception(f"File does not exist: {args.file}")

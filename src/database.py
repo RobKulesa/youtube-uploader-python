@@ -21,14 +21,14 @@ def get_uploads() -> pd.DataFrame:
     stmt = "SELECT * FROM volleyball_uploader.uploads"
     return connect_and_read(stmt)
 
-def insert_upload(file: str, privacy: Privacy) -> None:
-    path, filename = os.path.split(file)
-    stmt = f"INSERT INTO volleyball_uploader.uploads (filename, status, privacy, path) VALUES ('{filename}', '{UploadStatus.PENDING}', '{privacy}', '{path}')"
+def insert_upload(file: str, filename:str, privacy: Privacy) -> None:
+    path, _ = os.path.split(file)
+    stmt = f"INSERT INTO volleyball_uploader.uploads (filename, status, privacy, path) VALUES ('{filename}', '{UploadStatus.PENDING.value}', '{privacy}', '{path}')"
     connect_and_execute(DATABASE_CONFIG, stmt)
     return
 
 def update_upload_status(filename: str, status: UploadStatus) -> None:
-    stmt = f"UPDATE volleyball_uploader.uploads SET status = '{status}' WHERE filename = '{filename}' AND status = '{UploadStatus.PENDING}'"
+    stmt = f"UPDATE volleyball_uploader.uploads SET status = '{status.value}' WHERE filename = '{filename}' AND create_date = (SELECT MAX(create_date) FROM volleyball_uploader.uploads WHERE filename = '{filename}')"
     connect_and_execute(DATABASE_CONFIG, stmt)
     return
 

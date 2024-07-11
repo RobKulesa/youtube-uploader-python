@@ -3,6 +3,7 @@ from enum import Enum
 import os
 import argparse
 import logging
+import pathlib
 from src.youtube.upload_video import main as upload_video, Privacy, UploadStatus
 from src import database as db
 
@@ -36,16 +37,17 @@ def main():
         return
     
     for file in files:
-        filename = os.path.basename(file)
-        if not args.force and filename in uploads[uploads["status"].isin([UploadStatus.UPLOADED, UploadStatus.PENDING])].filename.values:
+        filename = pathlib.Path(file).name
+        stem = pathlib.Path(file).stem
+        if not args.force and filename in uploads[uploads["status"].isin([UploadStatus.UPLOADED.value, UploadStatus.PENDING.value])].filename.values:
             logger.info(f"Skipping {file} as it has already been uploaded")
             continue
 
         try:
-            db.insert_upload(file, args.privacy)
+            db.insert_upload(file, filename, args.privacy)
             logger.debug(f"Inserted {file} into the database")
 
-            status = upload_video(file, filename, args.privacy)
+            status = upload_video(file, stem.replace("_", " ").replace(":", "/"), args.privacy)
             logger.info(f"Upload status for {file}: {status}")
         except:
             logger.exception(f"Failed to upload {file}")

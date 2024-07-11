@@ -17,6 +17,6 @@ docker build --platform linux/amd64 --target runtime --tag <dockerhub username>/
 ```
 
 ```sh
-docker run -it --rm -v <path to videos>:/mnt/user/media/volleyball <dockerhub username>/volleyball-uploader bash
+docker run -it --rm -v <path to videos>:/videos <dockerhub username>/volleyball-uploader bash
 python3 /usr/local/bin/volleyball-uploader --help
 ```

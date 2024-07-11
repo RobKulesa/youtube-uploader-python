@@ -41,7 +41,6 @@ COPY . /app/
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR \
     chown -R root:root /app && \
     poetry --no-interaction install && \
-    #poetry --no-interaction run pytest && \
     poetry --no-interaction build -f sdist
 
 ##############
@@ -52,4 +51,7 @@ FROM python:3.12-slim as runtime
 USER root
 
 COPY --from=builder /app/dist/*.tar.gz .
+
+RUN touch /usr/local/bin/volleyball-uploader-oauth2.json
+
 RUN pip install *.tar.gz && rm *.tar.gz

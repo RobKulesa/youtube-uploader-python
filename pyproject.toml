@@ -9,6 +9,10 @@ packages = [
   {include = "src"}
 ]
 
+include = [
+  "src/youtube/client_secrets.json"
+]
+
 [tool.poetry.dependencies]
 python = "^3.12"
 psycopg2-binary = "^2.9.9"
@@ -32,3 +36,5 @@ volleyball-uploader = "src.main:main"
 
 [tool.poetry-dynamic-versioning]
 enable = true
+
+
