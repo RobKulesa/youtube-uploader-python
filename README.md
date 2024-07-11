@@ -13,7 +13,7 @@ docker run -t --rm volleyball-flyway
 ## Build and run main container:
 
 ```sh
-docker build --target runtime --tag robjkulesa/volleyball-uploader .
+docker build --platform linux/amd64 --target runtime --tag robjkulesa/volleyball-uploader .
 ```
 
 ```sh
