@@ -2,7 +2,7 @@
 ### Flyway
 ##############
 
-FROM flyway/flyway:10-alpine as flyway
+FROM flyway/flyway:10-alpine AS flyway
 
 USER flyway
 # Copy the flyway files to the container
@@ -18,7 +18,7 @@ RUN apk add --no-cache postgresql-client
 ##############
 ### Builder
 ##############
-FROM python:3.12-slim as builder
+FROM python:3.12-slim AS builder
 
 USER root
 WORKDIR /app
@@ -27,26 +27,22 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt -qq update && apt -qq -y --no-install-recommends install git
 
-RUN pip install poetry && \
-    poetry self update && \
-    poetry self add "poetry-dynamic-versioning[plugin]"
-
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+# Build uv app with dependencies installed
+ENV UV_CACHE_DIR=/tmp/uv_cache
 
 COPY . /app/
 
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR \
+RUN pip install --upgrade pip && \
+    pip install uv
+
+RUN --mount=type=cache,target=$UV_CACHE_DIR \
     chown -R root:root /app && \
-    poetry --no-interaction install && \
-    poetry --no-interaction build -f sdist
+    uv build --upgrade --sdist
 
 ##############
 ### Runtime
 ##############
-FROM python:3.12-slim as runtime
+FROM python:3.12-slim AS runtime
 
 USER root
 
@@ -55,3 +51,5 @@ COPY --from=builder /app/dist/*.tar.gz .
 RUN touch /usr/local/bin/volleyball-uploader-oauth2.json
 
 RUN pip install *.tar.gz && rm *.tar.gz
+
+ENTRYPOINT ["uploader"]
