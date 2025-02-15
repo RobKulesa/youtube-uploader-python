@@ -10,13 +10,16 @@ docker build --target flyway --tag volleyball-flyway .
 docker run -t --rm volleyball-flyway
 ```
 
-## Build and run main container:
+## Build and push and run main container:
 
 ```sh
-docker build --platform linux/amd64 --target runtime --tag <dockerhub username>/volleyball-uploader .
+docker build --platform linux/amd64 --target runtime --tag robjkulesa/youtube-uploader-python .
 ```
 
 ```sh
-docker run -it --rm -v <path to videos>:/videos <dockerhub username>/volleyball-uploader bash
-python3 /usr/local/bin/volleyball-uploader --help
+docker image push robjkulesa/youtube-uploader-python
+```
+
+```sh
+docker run -t --rm -v <path to videos>:/videos robjkulesa/youtube-uploader-python
 ```

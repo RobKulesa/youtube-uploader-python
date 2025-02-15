@@ -33,7 +33,8 @@ ENV UV_CACHE_DIR=/tmp/uv_cache
 COPY . /app/
 
 RUN pip install --upgrade pip && \
-    pip install uv
+    pip install uv && \
+    uv sync --frozen
 
 RUN --mount=type=cache,target=$UV_CACHE_DIR \
     chown -R root:root /app && \
@@ -51,3 +52,5 @@ COPY --from=builder /app/dist/*.tar.gz .
 RUN touch /usr/local/bin/volleyball-uploader-oauth2.json
 
 RUN pip install *.tar.gz && rm *.tar.gz
+
+ENTRYPOINT ["uploader"]
