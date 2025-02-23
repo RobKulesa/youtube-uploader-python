@@ -49,7 +49,7 @@ USER root
 
 COPY --from=builder /app/dist/*.tar.gz .
 
-RUN touch /usr/local/bin/volleyball-uploader-oauth2.json
+RUN touch /usr/local/bin/uploader-oauth2.json
 
 RUN pip install *.tar.gz && rm *.tar.gz
 
