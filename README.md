@@ -13,7 +13,7 @@ docker run -t --rm volleyball-flyway
 ## Build and push and run main container:
 
 ```sh
-docker build --platform linux/amd64 --target runtime --tag robjkulesa/youtube-uploader-python .
+DOCKER_BUILDKIT=1 docker build --platform linux/amd64 --target runtime --tag robjkulesa/youtube-uploader-python .
 ```
 
 ```sh
