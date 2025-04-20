@@ -29,8 +29,6 @@ def main():
     parser.add_argument("--privacy", type=Privacy, choices=list(Privacy), required=False, help="The privacy setting for the video", default=Privacy.PRIVATE)
     args = parser.parse_args()
 
-    uploads = db.get_uploads()
-
     files = scan_dir(args.directory, args.recursive)
     if len(files) == 0:
         logger.info(f"No videos found in {args.directory}")
@@ -39,6 +37,7 @@ def main():
     for file in files:
         filename = pathlib.Path(file).name
         stem = pathlib.Path(file).stem
+        uploads = db.get_uploads()
         if not args.force and filename in uploads[uploads["status"].isin([UploadStatus.UPLOADED.value, UploadStatus.PENDING.value])].filename.values:
             logger.info(f"Skipping {file} as it has already been uploaded")
             continue
