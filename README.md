@@ -21,5 +21,5 @@ docker image push robjkulesa/youtube-uploader-python
 ```
 
 ```sh
-docker run -t --rm -v <path to videos>:/videos robjkulesa/youtube-uploader-python
+docker run -t --rm -v {path to videos}:/videos robjkulesa/youtube-uploader-python
 ```
