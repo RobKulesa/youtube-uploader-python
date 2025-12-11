@@ -17,6 +17,8 @@ DATABASE_CONFIG = {
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
+
 def get_uploads() -> pd.DataFrame:
     stmt = "SELECT * FROM volleyball_uploader.uploads"
     return connect_and_read(stmt)
@@ -29,6 +31,20 @@ def insert_upload(file: str, filename:str, privacy: Privacy) -> None:
 
 def update_upload_status(filename: str, status: UploadStatus) -> None:
     stmt = f"UPDATE volleyball_uploader.uploads SET status = '{status.value}' WHERE filename = '{filename}' AND create_date = (SELECT MAX(create_date) FROM volleyball_uploader.uploads WHERE filename = '{filename}')"
+    connect_and_execute(DATABASE_CONFIG, stmt)
+    return
+
+def update_video_id(filename: str, video_id: str) -> None:
+    stmt = f"UPDATE volleyball_uploader.uploads SET video_id = '{video_id}' WHERE filename = '{filename}' AND create_date = (SELECT MAX(create_date) FROM volleyball_uploader.uploads WHERE filename = '{filename}')"
+    connect_and_execute(DATABASE_CONFIG, stmt)
+    return
+
+def get_playlists() -> pd.DataFrame:
+    stmt = "SELECT * FROM volleyball_uploader.playlists"
+    return connect_and_read(stmt)
+
+def insert_playlist(title: str, playlist_id: str, privacy: Privacy) -> None:
+    stmt = f"INSERT INTO volleyball_uploader.playlists (title, playlist_id, privacy) VALUES ('{title}', '{playlist_id}', '{privacy}')"
     connect_and_execute(DATABASE_CONFIG, stmt)
     return
 
