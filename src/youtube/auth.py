@@ -57,7 +57,15 @@ def get_authenticated_service(args):
 if __name__ == "__main__":
     get_authenticated_service(
         args=SafeNamespace(
-            noauth_local_webserver=True,
+            noauth_local_webserver=False,
             logging_level="DEBUG",
+            auth_host_name="localhost",
+            auth_host_port=[8080, 8090],
         )
+    )
+
+    import shutil
+    shutil.copy(
+        "src/youtube/auth.py-oauth2.json",
+        "/Volumes/appdata/youtube-uploader-python/oauth/uploader-oauth2.json",
     )
